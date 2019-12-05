@@ -1,3 +1,4 @@
 *.pyc
 csv_files/
 migrations/
+.DS_Store
