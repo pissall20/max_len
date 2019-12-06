@@ -11,6 +11,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RawDataSerializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        many = kwargs.pop('many', True)
+        super(RawDataSerializer, self).__init__(many=many, *args, **kwargs)
+
     class Meta:
         model = RawData
         fields = "__all__"
