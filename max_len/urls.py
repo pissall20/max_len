@@ -24,7 +24,7 @@ from api_v1 import views
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Blog API",
+        title="Lenarciak Data API",
         default_version='v1',
         description="Test description",
     ),
