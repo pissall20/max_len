@@ -12,10 +12,10 @@ class RawDataViewSet(viewsets.ModelViewSet):
 
 
 class FeatureViewSet(viewsets.ModelViewSet):
-    queryset = Feature.objects.all().order_by('-date')
+    queryset = Feature.objects.all()
     serializer_class = FeatureSerializer
 
 
 class PredictionViewSet(viewsets.ModelViewSet):
-    queryset = Prediction.objects.all().order_by('-date')
+    queryset = Prediction.objects.all()
     serializer_class = PredictionSerializer
