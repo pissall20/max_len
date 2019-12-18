@@ -21,6 +21,7 @@ class RawData(models.Model):
     x13 = models.FloatField()
     x14 = models.FloatField()
     x15 = models.FloatField()
+    target = models.FloatField(null=True)
 
     class Meta:
         constraints = [
@@ -33,12 +34,11 @@ class RawData(models.Model):
 
 class Feature(models.Model):
     raw = models.OneToOneField(RawData, on_delete=models.CASCADE, primary_key=True, null=False)
-    feature1 = models.FloatField()
-    feature2 = models.FloatField()
+    feature1 = models.FloatField(null=True)
+    feature2 = models.FloatField(null=True)
 
 
 class Prediction(models.Model):
     raw = models.OneToOneField(RawData, on_delete=models.CASCADE, primary_key=True, null=False)
-    target = models.FloatField(null=True)
     prediction = models.FloatField(null=True)
 
