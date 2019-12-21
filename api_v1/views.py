@@ -6,6 +6,7 @@ from rest_framework.response import Response
 import pandas as pd
 from api_v1 import tasks
 from joblib import dump, load
+from django.db.utils import IntegrityError
 
 # Create your views here.
 
@@ -18,7 +19,12 @@ class RawDataViewSet(viewsets.ModelViewSet):
         many = True if isinstance(request.data, list) else False
         serializer = RawDataSerializer(data=request.data, many=many)
         if serializer.is_valid():
-            serializer.save()
+            try:
+                serializer.save()
+            except IntegrityError as e:
+                return Response({
+                    str(e)
+                }, status.HTTP_400_BAD_REQUEST)
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
@@ -28,11 +34,15 @@ class RawDataViewSet(viewsets.ModelViewSet):
         model = load("api_v1/regr_model.joblib")
         feature_cols = [x for x in df.columns if x not in ["prediction", 'target', 'date', 's']]
         test_X = df[feature_cols]
-        prediction = model.predict(test_X)
+        prediction_list = model.predict(test_X).tolist()
+
+        for data_instance, prediction_instance in zip(serializer.instance, prediction_list):
+            predict = Prediction(raw=data_instance, prediction=prediction_instance)
+            predict.save()
 
         return Response({
             "raw_data": serializer.data,
-            "prediction": prediction.tolist()
+            "prediction": prediction_list
         }, status=status.HTTP_201_CREATED)
 
 
