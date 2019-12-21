@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api_v1.models import RawData, Feature, Prediction
+from api_v1.models import RawData, Feature, Prediction, Target
 from django.contrib.auth.models import User
 
 
@@ -22,6 +22,15 @@ class FeatureSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Feature
+        fields = "__all__"
+
+
+class TargetSerializer(serializers.ModelSerializer):
+    # Add raw data fields
+    raw_data = RawDataSerializer(required=False, read_only=True)
+
+    class Meta:
+        model = Target
         fields = "__all__"
 
 

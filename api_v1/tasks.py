@@ -19,10 +19,5 @@ def create_features(raw_data_id):
     return FeatureSerializer(feature_obj)
 
 
-def raw_to_features(raw):
-    feature1 = raw.x1 + raw.x2
-    feature2 = raw.x3 + raw.x4
-    return {
-        "feature1": feature1,
-        "feature2": feature2
-    }
+def raw_to_features(df):
+    return df
