@@ -4,8 +4,8 @@ from django.db import models
 
 
 class RawData(models.Model):
-    date = models.DateField()
-    s = models.CharField(max_length=32)
+    date = models.DateField(null=False)
+    s = models.CharField(max_length=32, null=False)
     x1 = models.FloatField()
     x2 = models.FloatField()
     x3 = models.FloatField()
