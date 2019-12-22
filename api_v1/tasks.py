@@ -1,23 +1,3 @@
-from api_v1.models import RawData, Feature
-from api_v1.serializers import FeatureSerializer
-from max_len.celery import app
-
-
-@app.task(bind=True)
-def create_features(raw_data_id):
-    data_obj = RawData.objects.get(id=raw_data_id)
-
-    features = raw_to_features(data_obj)
-
-    feature_obj = Feature.objects.create(
-        raw=data_obj,
-        feature1=features['feature1'],
-        feature2=features['feature2']
-    )
-    feature_obj.save()
-
-    return FeatureSerializer(feature_obj)
-
-
-def raw_to_features(df):
+def feature_creation(df):
+    # Write all your features below but above "return df"
     return df
