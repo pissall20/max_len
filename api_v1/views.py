@@ -1,12 +1,13 @@
-from django.shortcuts import render
-from rest_framework import viewsets, status
-from api_v1.serializers import RawDataSerializer, FeatureSerializer, PredictionSerializer, TargetSerializer
-from api_v1.models import RawData, Feature, Prediction, Target
-from rest_framework.response import Response
 import pandas as pd
-from api_v1 import tasks
-from joblib import dump, load
 from django.db.utils import IntegrityError
+from joblib import load
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+
+from api_v1.models import RawData, Feature, Prediction, Target
+from api_v1.serializers import RawDataSerializer, FeatureSerializer, PredictionSerializer, TargetSerializer
+from api_v1.tasks import feature_creation
+
 
 # Create your views here.
 
@@ -29,12 +30,15 @@ class RawDataViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
         df = pd.DataFrame(request.data if isinstance(request.data, list) else [request.data])
-        # feature_df = tasks.raw_to_features(df)
+        df = feature_creation(df)
 
         model = load("api_v1/regr_model.joblib")
+
         feature_cols = [x for x in df.columns if x not in ["prediction", 'target', 'date', 's']]
-        test_X = df[feature_cols]
-        prediction_list = model.predict(test_X).tolist()
+
+        test_x = df[feature_cols]
+
+        prediction_list = model.predict(test_x).tolist()
 
         for data_instance, prediction_instance in zip(serializer.instance, prediction_list):
             predict = Prediction(raw=data_instance, prediction=prediction_instance)
@@ -59,17 +63,3 @@ class FeatureViewSet(viewsets.ModelViewSet):
 class PredictionViewSet(viewsets.ModelViewSet):
     queryset = Prediction.objects.all()
     serializer_class = PredictionSerializer
-
-
-class DoPredictViewSet(viewsets.ViewSet):
-
-    def get(self, request):
-        data = request.data
-        data_id = data.get("id")
-        pass
-
-    def post(self, request):
-        data = request.data
-        pass
-
-
