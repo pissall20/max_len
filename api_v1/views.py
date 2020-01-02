@@ -8,8 +8,12 @@ from api_v1.models import RawData, Feature, Prediction, Target
 from api_v1.serializers import RawDataSerializer, FeatureSerializer, PredictionSerializer, TargetSerializer
 from api_v1.tasks import feature_creation
 
-
 # Create your views here.
+
+# Some variables for ease of access
+identifier_cols = ["date", "s"]
+target_col, prediction_col = "target", "prediction"
+not_feature_cols = identifier_cols + [target_col, prediction_col]
 
 
 class RawDataViewSet(viewsets.ModelViewSet):
@@ -29,12 +33,12 @@ class RawDataViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
-        df = pd.DataFrame(request.data if isinstance(request.data, list) else [request.data])
+        df = pd.DataFrame(request.data if many else [request.data])
         df = feature_creation(df)
 
         model = load("api_v1/regr_model.joblib")
 
-        feature_cols = [x for x in df.columns if x not in ["prediction", 'target', 'date', 's']]
+        feature_cols = [x for x in df.columns if x not in not_feature_cols]
 
         test_x = df[feature_cols]
 
