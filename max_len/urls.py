@@ -36,6 +36,7 @@ router = routers.DefaultRouter()
 router.register(r'raw-data', views.RawDataViewSet)
 router.register(r'features', views.FeatureViewSet)
 router.register(r'predictions', views.PredictionViewSet)
+router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -5,8 +5,9 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 
 from api_v1.models import RawData, Feature, Prediction, Target
-from api_v1.serializers import RawDataSerializer, FeatureSerializer, PredictionSerializer, TargetSerializer
+from api_v1.serializers import RawDataSerializer, FeatureSerializer, PredictionSerializer, TargetSerializer, UserSerializer
 from api_v1.tasks import feature_creation
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -14,6 +15,14 @@ from api_v1.tasks import feature_creation
 identifier_cols = ["date", "s"]
 target_col, prediction_col = "target", "prediction"
 not_feature_cols = identifier_cols + [target_col, prediction_col]
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
 
 
 class RawDataViewSet(viewsets.ModelViewSet):
